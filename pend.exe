@@ -1,0 +1,31 @@
+#!/bin/bash
+
+file=$1
+while IFS="=" read -r key value; do
+   case $key in
+           "rootPath")
+                   rootPath=$(echo $value);;
+           "month")
+                   month=$(echo $value);;
+           "year")
+                   year=$(echo $value);;
+   esac
+done < $file
+
+echo "Enter company name?"
+read companyName
+
+echo "Enter link?"
+read link
+
+echo "Enter role name?"
+read roleName
+
+echo "Enter location?"
+read location
+
+status="open"
+
+echo $companyName:$link:$roleName:$(date):$location:$status >> $rootPath/jobpending.txt
+
+

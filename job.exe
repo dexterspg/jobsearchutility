@@ -1,0 +1,95 @@
+#!/bin/bash
+
+file=$1
+while IFS="=" read -r key value; do
+   case $key in
+           "rootPath")
+		   rootPath=$(echo $value);;
+           "month")
+		   month=$(echo $value);;
+           "year")
+		   year=$(echo $value);;
+   esac
+done < $file
+
+pathVar=$rootPath/$year/$month
+
+monthArr=("June" "July" "August" "September")
+for i in ${monthArr[@]}
+do
+	echo $i
+	ls $rootPath/$year/$i
+	echo ""
+done
+
+echo "What is the company name?"
+read companyName
+
+
+companyFolder=$pathVar/$companyName
+
+if [ -d $companyFolder ];then
+	echo "folder $companyFolder already exists."
+else
+	mkdir -v "$companyFolder"
+fi
+
+
+echo "What is the role name?"
+read roleName
+
+roleFolder=$companyFolder/$roleName
+location="Ontario"
+if [ -d $roleFolder ];then
+	echo "folder $companyFolder already exists."
+else
+	mkdir -v "$roleFolder"
+	touch "$roleFolder"/"$roleName.docx"
+
+	resumeName="Dexter Pagkaliwangan_Resume.docx"
+	coverLetter="Dexter_Pagkaliwangan_Cover_Letter.docx"
+
+	isCoverLetter="no"
+	#copy resume to folder
+
+	read -p "Is this for Toronto? y/n: " opt
+	case $opt in
+		y|Y|yes)
+			cp $rootPath/$year/"$resumeName" "$roleFolder";;
+		*)
+		        cp $rootPath/$year/"montreal resume"/"$resumeName" "$roleFolder"
+			location="Montreal"
+		;;
+	esac
+	
+	read -p "Do you want to enter the location?" opt
+        case $opt in
+                y|Y|yes)
+			read -p "What is the location?" loc
+			location=$loc
+			;;
+                *)
+			echo "Exit typing location..."
+                ;;
+        esac
+
+
+	#open word document   "" is the title
+	start "" "$roleFolder"/"$roleName".docx
+	start "" "$roleFolder"/"$resumeName"
+
+	read -p "Do you need a cover letter? y/n: " opt
+        case $opt in
+                y|Y|yes)
+                    cp $rootPath/$year/"$coverLetter" "$roleFolder"
+                        start "" "$roleFolder"/"$coverLetter"
+                        isCoverLetter="yes"
+                        ;;
+                *)
+                        ;;
+        esac
+
+
+	#add to log file
+	echo  $companyName:$roleName:$(date):$location:$isCoverLetter >> $rootPath/job.log.txt
+fi

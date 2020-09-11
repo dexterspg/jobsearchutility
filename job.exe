@@ -9,6 +9,10 @@ while IFS="=" read -r key value; do
 		   month=$(echo $value);;
            "year")
 		   year=$(echo $value);;
+       "resumeName")
+             resumeName=$(echo $value);;
+	"coverLetter")
+	       coverLetter=$(echo $value);;
    esac
 done < $file
 
@@ -45,9 +49,6 @@ if [ -d $roleFolder ];then
 else
 	mkdir -v "$roleFolder"
 	touch "$roleFolder"/"$roleName.docx"
-
-	resumeName="Dexter Pagkaliwangan_Resume.docx"
-	coverLetter="Dexter_Pagkaliwangan_Cover_Letter.docx"
 
 	isCoverLetter="no"
 	#copy resume to folder
